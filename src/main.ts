@@ -2,7 +2,7 @@ import vscode from 'vscode'
 import { ViewList } from './views/list.view'
 import { ViewLocal } from './views/local.view'
 
-import { log, config } from './tools'
+import { log, config, getWorkspaceTemplateConfig } from './tools'
 import {
   registerCommonCommands,
   registerListCommands,
@@ -35,10 +35,10 @@ export function activate(ctx: vscode.ExtensionContext) {
       viewList.onConfigurationRefresh()
       viewLocal.onConfigurationRefresh()
     })
-    vscode.workspace.onDidSaveTextDocument(e => {
-      console.log('onDidSaveTextDocument===>', e.fileName, e.uri);
-      if (e.uri.path.endsWith('settings.json')) {
-       
+    vscode.workspace.onDidSaveTextDocument(event => {
+      console.log('onDidSaveTextDocument===>', event.fileName);
+      if (event.fileName.includes('swagger-to-types.template')) {
+        getWorkspaceTemplateConfig()
       }
     })
   }
