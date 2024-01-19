@@ -11,6 +11,8 @@ import {
   saveDocument,
   log,
   deleteEmptyProperty,
+  getWorkspaceTemplateConfig,
+  templateConfig
 } from '../tools'
 import { openListPicker, renderToInterface } from '../core'
 
@@ -124,7 +126,7 @@ export function registerListCommands({
       })
     },
 
-    /** 保存接口至本地 (单个/批量) */
+    /** 保存请求和接口至本地 (单个/批量) */
     async saveInterface(item: ListItem) {
       switch (item.options.type) {
         case 'group':
@@ -163,6 +165,7 @@ export function registerListCommands({
             return log.error('interfaceItem is undefined.', true)
           }
 
+          /** 保存接口 */
           viewList
             .saveInterface(interfaceItem)
             .then(() => {
@@ -180,6 +183,24 @@ export function registerListCommands({
                 true
               )
             })
+          /** 保存请求 */
+          viewList
+          .copyRequest(interfaceItem)
+          .then(() => {
+            log.info(
+              `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize('success')}`,
+              true
+            )
+            viewLocal.refresh()
+          })
+          .catch((err) => {
+            log.error(
+              `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize(
+                'failed'
+              )} ${err}`,
+              true
+            )
+          })
           break
 
         default:
@@ -196,6 +217,71 @@ export function registerListCommands({
         viewLocal.refresh()
         preSaveDocument(docText, doc.fileName) // 更新显示状态
       })
+    },
+
+    /** 保存请求代码 (单个/批量) */
+    copyRequest(item: ListItem) {
+      switch (item.options.type) {
+        case 'group':
+          // viewList
+          //   .saveInterfaceGroup(item)
+          //   .then(() => {
+          //     log.info(
+          //       `${localize.getLocalize('command.saveInterface')}(${localize.getLocalize('text.group')}) <${
+          //         item.label
+          //       }> ${localize.getLocalize('success')}`,
+          //       false
+          //     )
+
+          //     viewLocal.refresh()
+          //   })
+          //   .catch((err) => {
+          //     log.error(
+          //       `${localize.getLocalize('command.saveInterface')}(${localize.getLocalize('text.group')}) <${
+          //         item.label
+          //       }> ${localize.getLocalize('failed')} ${err}`,
+          //       true
+          //     )
+          //   })
+          break
+
+        case 'interface':
+          let interfaceItem: TreeInterface | undefined
+          try {
+            // @ts-ignore
+            interfaceItem = item.command?.arguments[0]
+          } catch (error) {
+            log.error(error, true)
+          }
+
+          if (!interfaceItem) {
+            return log.error('interfaceItem is undefined.', true)
+          }
+
+          viewList
+            .copyRequest(interfaceItem)
+            .then(() => {
+              log.info(
+                `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize('success')}`,
+                true
+              )
+              viewLocal.refresh()
+            })
+            .catch((err) => {
+              log.error(
+                `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize(
+                  'failed'
+                )} ${err}`,
+                true
+              )
+            })
+          break
+
+        default:
+          log.warn(localize.getLocalize('error.action'), true)
+          log.warn(JSON.stringify(item))
+          break
+      }
     },
   }
 

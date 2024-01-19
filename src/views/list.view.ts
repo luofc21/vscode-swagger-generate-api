@@ -22,6 +22,7 @@ import {
   WORKSPACE_PATH,
   localize,
   showLoading,
+  templateConfig
 } from '../tools'
 
 type SwaggerJsonMap = Map<string, SwaggerJsonTreeItem[]>
@@ -340,6 +341,32 @@ export class ViewList extends BaseTreeProvider<ListItem> {
     const { savePath } = config.extConfig
     this.globalSavePath = path.resolve(WORKSPACE_PATH || '', savePath)
     this.refresh()
+  }
+
+  /** 保存请求代码 */
+  public async copyRequest(
+    itemSource: TreeInterface | ListItem | SwaggerJsonUrlItem,
+    filePath?: string
+  ): Promise<'no-change' | void> {
+    const item = itemSource as TreeInterface
+    const { compareChanges } = config.extConfig
+    if (!item.pathName) return Promise.reject('SaveInterface Error')
+    if (templateConfig.copyRequest) {
+      const str = templateConfig.copyRequest(item)
+      /** 生成请求文件&代码 */
+      const globalCopyRequestSavePath = config.extConfig.copyRequestSavePath
+      const savePath = path.resolve(WORKSPACE_PATH || '', globalCopyRequestSavePath)
+      const serverName = item.groupName
+      const filePathH = path.join(savePath, `${serverName}.js`)
+      const fileHeaderDoc = config.extConfig.copyRequestHeaderDoc
+      if (typeof str === 'string') {
+        saveDocument(str, filePathH, fileHeaderDoc)
+      } else {
+        saveDocument(str.join('\n'), filePathH, fileHeaderDoc)
+      }
+    } else {
+      log.error('<copyRequest> copyRequest is undefined.', true)
+    }
   }
 }
 

@@ -110,8 +110,6 @@ export function registerLocalCommands(viewList: ViewList, viewLocal: ViewLocal) 
 
     /** 复制请求代码 */
     copyRequest(e: any) {
-      /** 每次复制代码之前先重新获取模板配置。更好的方法是监听模板配置文件变化，然后更新模板配置 */
-      getWorkspaceTemplateConfig()
       console.log('e===>', e);
       const filePath = e.path || e.options.filePath
       const fileInfo: any = viewLocal.readLocalFile(filePath)

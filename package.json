@@ -70,8 +70,8 @@
         "icon": "$(cloud-download)"
       },
       {
-        "command": "cmd.local.copyRequest",
-        "title": "%command.local.copyRequest%",
+        "command": "cmd.list.copyRequest",
+        "title": "%command.list.copyRequest%",
         "icon": "$(copy)"
       },
       {
@@ -143,7 +143,7 @@
     "menus": {
       "editor/title": [
         {
-          "command": "cmd.local.copyRequest",
+          "command": "cmd.list.copyRequest",
           "group": "navigation@01",
           "when": "editorLangId == typescript && swaggerToTypes.hasCopyRequestFn == 1 && resourcePath in swaggerToTypes.localFiles"
         },
@@ -202,9 +202,9 @@
           "when": "view == view.list && viewItem == interface || viewItem == group"
         },
         {
-          "command": "cmd.local.copyRequest",
+          "command": "cmd.list.copyRequest",
           "group": "inline@08",
-          "when": "view == view.local && swaggerToTypes.hasCopyRequestFn == 1"
+          "when": "view == view.list && swaggerToTypes.hasCopyRequestFn == 1"
         },
         {
           "command": "cmd.local.updateInterface",

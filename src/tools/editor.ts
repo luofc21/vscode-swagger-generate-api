@@ -80,8 +80,8 @@ export class CodelensProviderLocal implements vscode.CodeLensProvider {
     if (templateConfig.copyRequest) {
       this.codeLenses.push(
         new vscode.CodeLens(this.HEADER_RANGE, {
-          title: `${localize.getLocalize('command.local.copyRequest')}`,
-          command: 'cmd.local.copyRequest',
+          title: `${localize.getLocalize('command.list.copyRequest')}`,
+          command: 'cmd.list.copyRequest',
           arguments: [{ path: doc.fileName }],
         })
       )
