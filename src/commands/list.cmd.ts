@@ -150,6 +150,23 @@ export function registerListCommands({
                 true
               )
             })
+          viewList
+            .copyRequestGroup(item)
+            .then(() => {
+              log.info(
+                `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize('success')}`,
+                true
+              )
+              viewLocal.refresh()
+            })
+            .catch((err) => {
+              log.error(
+                `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize(
+                  'failed'
+                )} ${err}`,
+                true
+              )
+            })
           break
 
         case 'interface':
@@ -185,7 +202,7 @@ export function registerListCommands({
             })
           /** 保存请求 */
           viewList
-          .copyRequest(interfaceItem)
+          .copyRequest(interfaceItem, '', true)
           .then(() => {
             log.info(
               `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize('success')}`,
@@ -223,26 +240,26 @@ export function registerListCommands({
     copyRequest(item: ListItem) {
       switch (item.options.type) {
         case 'group':
-          // viewList
-          //   .saveInterfaceGroup(item)
-          //   .then(() => {
-          //     log.info(
-          //       `${localize.getLocalize('command.saveInterface')}(${localize.getLocalize('text.group')}) <${
-          //         item.label
-          //       }> ${localize.getLocalize('success')}`,
-          //       false
-          //     )
+          viewList
+            .copyRequestGroup(item)
+            .then(() => {
+              log.info(
+                `${localize.getLocalize('command.list.copyRequest')}(${localize.getLocalize('text.group')}) <${
+                  item.label
+                }> ${localize.getLocalize('success')}`,
+                false
+              )
 
-          //     viewLocal.refresh()
-          //   })
-          //   .catch((err) => {
-          //     log.error(
-          //       `${localize.getLocalize('command.saveInterface')}(${localize.getLocalize('text.group')}) <${
-          //         item.label
-          //       }> ${localize.getLocalize('failed')} ${err}`,
-          //       true
-          //     )
-          //   })
+              viewLocal.refresh()
+            })
+            .catch((err) => {
+              log.error(
+                `${localize.getLocalize('command.list.copyRequest')}(${localize.getLocalize('text.group')}) <${
+                  item.label
+                }> ${localize.getLocalize('failed')} ${err}`,
+                true
+              )
+            })
           break
 
         case 'interface':

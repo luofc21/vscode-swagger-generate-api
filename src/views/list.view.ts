@@ -346,13 +346,15 @@ export class ViewList extends BaseTreeProvider<ListItem> {
   /** 保存请求代码 */
   public async copyRequest(
     itemSource: TreeInterface | ListItem | SwaggerJsonUrlItem,
-    filePath?: string
+    filePath?: string,
+    isSaveTypes?: boolean
   ): Promise<'no-change' | void> {
     const item = itemSource as TreeInterface
     const { compareChanges } = config.extConfig
     if (!item.pathName) return Promise.reject('SaveInterface Error')
-    if (templateConfig.copyRequest) {
-      const str = templateConfig.copyRequest(item)
+    const request = isSaveTypes ? templateConfig.copyRequestTS : templateConfig.copyRequest
+    if (request) {
+      const str = request(item)
       /** 生成请求文件&代码 */
       const globalCopyRequestSavePath = config.extConfig.copyRequestSavePath
       const savePath = path.resolve(WORKSPACE_PATH || '', globalCopyRequestSavePath)
@@ -367,6 +369,22 @@ export class ViewList extends BaseTreeProvider<ListItem> {
     } else {
       log.error('<copyRequest> copyRequest is undefined.', true)
     }
+  }
+  /** 批量保存请求代码 */
+  public async copyRequestGroup(item: ListItem, isSaveTypes?: boolean) {
+    return new Promise(async (resolve, reject) => {
+      // await this._refresh()
+      const listData = this.swaggerJsonMap.get(item.options.configItem.url) || []
+      const itemChildren: ListItem[] | undefined = listData.find((x) => x.key === item.options.key)?.children
+      if (itemChildren && itemChildren.length) {
+        for (let index = 0; index < itemChildren.length; index++) {
+          await this.copyRequest(itemChildren[index])
+        }
+        resolve(void 0)
+      } else {
+        reject('No Children!')
+      }
+    })
   }
 }
 
