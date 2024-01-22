@@ -25,7 +25,7 @@ export interface SwaggerJsonUrlItem {
   basePath?: string
   /** `.d.ts` 文件保存路径 (独立) */
   savePath?: string
-  /** copyRequest请求保存路径 (公共) */
+  /** copyRequest请求保存路径 (独立) */
   copyRequestSavePath?: string
   /** 追加请求头 */
   headers?: Record<string, string>

@@ -127,18 +127,18 @@ export function registerLocalCommands(viewList: ViewList, viewLocal: ViewLocal) 
         } else {
           vscode.env.clipboard.writeText(str.join('\n'))
         }
-        /** 生成请求文件&代码 */
-        const globalCopyRequestSavePath = config.extConfig.copyRequestSavePath
-        const savePath = path.resolve(WORKSPACE_PATH || '', globalCopyRequestSavePath)
-        const serverName = fileInfo.base.split('-').at(-1)
-        const filePathH = path.join(savePath, `${serverName}.js`)
-        // console.log('filePathH===>', filePathH);
-        const fileHeaderDoc = config.extConfig.copyRequestHeaderDoc
-        if (typeof str === 'string') {
-          saveDocument(str, filePathH, fileHeaderDoc)
-        } else {
-          saveDocument(str.join('\n'), filePathH, fileHeaderDoc)
-        }
+        // /** 生成请求文件&代码 */
+        // const globalCopyRequestSavePath = config.extConfig.copyRequestSavePath
+        // const savePath = path.resolve(WORKSPACE_PATH || '', globalCopyRequestSavePath)
+        // const serverName = fileInfo.base.split('-').at(-1)
+        // const filePathH = path.join(savePath, `${serverName}.js`)
+        // // console.log('filePathH===>', filePathH);
+        // const fileHeaderDoc = config.extConfig.copyRequestHeaderDoc
+        // if (typeof str === 'string') {
+        //   saveDocument(str, filePathH, fileHeaderDoc)
+        // } else {
+        //   saveDocument(str.join('\n'), filePathH, fileHeaderDoc)
+        // }
         /** 打印日志 */
         log.info(
           `${localize.getLocalize('command.local.copyRequest')}${localize.getLocalize('success')} <${fileInfo.name}>`,

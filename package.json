@@ -75,6 +75,11 @@
         "icon": "$(copy)"
       },
       {
+        "command": "cmd.local.copyRequest",
+        "title": "%command.list.copyRequest%",
+        "icon": "$(copy)"
+      },
+      {
         "command": "cmd.common.deleteFile",
         "title": "%command.remove%",
         "icon": "$(trash)"
@@ -205,6 +210,11 @@
           "command": "cmd.list.copyRequest",
           "group": "inline@08",
           "when": "view == view.list && swaggerToTypes.hasCopyRequestFn == 1"
+        },
+        {
+          "command": "cmd.local.copyRequest",
+          "group": "inline@08",
+          "when": "view == view.local && swaggerToTypes.hasCopyRequestFn == 1"
         },
         {
           "command": "cmd.local.updateInterface",

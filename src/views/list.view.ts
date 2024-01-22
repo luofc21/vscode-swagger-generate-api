@@ -350,6 +350,7 @@ export class ViewList extends BaseTreeProvider<ListItem> {
     isSaveTypes?: boolean
   ): Promise<'no-change' | void> {
     const item = itemSource as TreeInterface
+    console.log('request.item===>', item );
     const { compareChanges } = config.extConfig
     if (!item.pathName) return Promise.reject('SaveInterface Error')
     const request = isSaveTypes ? templateConfig.copyRequestTS : templateConfig.copyRequest
@@ -358,9 +359,13 @@ export class ViewList extends BaseTreeProvider<ListItem> {
       /** 生成请求文件&代码 */
       const globalCopyRequestSavePath = config.extConfig.copyRequestSavePath
       const savePath = path.resolve(WORKSPACE_PATH || '', globalCopyRequestSavePath)
-      const serverName = item.groupName
+      const serverName = item.basePath.slice(1)
       const filePathH = path.join(savePath, `${serverName}.js`)
-      const fileHeaderDoc = config.extConfig.copyRequestHeaderDoc
+      const fileHeaderDoc = 
+`${config.extConfig.copyRequestHeaderDoc}
+
+const serverName = '${serverName}'
+`
       if (typeof str === 'string') {
         saveDocument(str, filePathH, fileHeaderDoc)
       } else {
