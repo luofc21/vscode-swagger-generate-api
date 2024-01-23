@@ -10,24 +10,26 @@
 
 ## Config
 
-| 名称 | 说明 | 类型 | 默认 |
-| --- | --- | --- | --- |
-| swaggerToTypes.swaggerJsonUrl | Swagger API 列表 | [SwaggerJsonUrlItem](#SwaggerJsonUrlItem)[] | [] |
-| swaggerToTypes.swaggerJsonHeaders | 追加请求头 (全局) | object | {} |
-| swaggerToTypes.savePath | `.d.ts` 接口文件保存路径 | string | 'types/swagger-interfaces' |
-| swaggerToTypes.showStatusbarItem | 显示状态栏按钮 | boolean | `true` |
-| swaggerToTypes.compareChanges | 是否在更新接口时比对更改 (无更改不更新) | boolean | `true` |
-| swaggerToTypes.reloadWhenSettingsChanged | 当用户设置更改时重新加载数据. (在某些频繁刷新设置的情况下需要关闭) | boolean | `true` |
+| 名称                                     | 说明                                                               | 类型                                        | 默认                       |
+| ---------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------- | -------------------------- |
+| swaggerToTypes.swaggerJsonUrl            | Swagger API 列表                                                   | [SwaggerJsonUrlItem](#SwaggerJsonUrlItem)[] | []                         |
+| swaggerToTypes.swaggerJsonHeaders        | 追加请求头 (全局)                                                  | object                                      | {}                         |
+| swaggerToTypes.savePath                  | `.d.ts` 接口文件保存路径                                           | string                                      | 'types/swagger-interfaces' |
+| swaggerToTypes.showStatusbarItem         | 显示状态栏按钮                                                     | boolean                                     | `true`                     |
+| swaggerToTypes.compareChanges            | 是否在更新接口时比对更改 (无更改不更新)                            | boolean                                     | `true`                     |
+| swaggerToTypes.reloadWhenSettingsChanged | 当用户设置更改时重新加载数据. (在某些频繁刷新设置的情况下需要关闭) | boolean                                     | `true`                     |
 
 ## SwaggerJsonUrlItem
 
-| 属性     | 说明                               | 类型   | 是否必填 |
-| -------- | ---------------------------------- | ------ | -------- |
-| title    | 项目标题                           | string | \*       |
-| url      | swagger json url                   | string | \*       |
-| link     | 在浏览器打开外部链接               | string |          |
-| basePath | basePath                           | string |          |
-| headers  | 自定义请求头信息 (如鉴权 Token 等) | object |          |
+| 属性                | 说明                               | 类型   | 是否必填 |
+| ------------------- | ---------------------------------- | ------ | -------- |
+| title               | 项目标题                           | string | \*       |
+| url                 | swagger json url                   | string | \*       |
+| link                | 在浏览器打开外部链接               | string |          |
+| basePath            | basePath                           | string |          |
+| headers             | 自定义请求头信息 (如鉴权 Token 等) | object |          |
+| savePath            | `.d.ts` 文件保存路径               | string |          |
+| copyRequestSavePath | copyRequest请求保存路径            | string |          |
 
 ## 快捷键
 

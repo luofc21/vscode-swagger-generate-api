@@ -47,6 +47,27 @@ export function requireModule(modulePath: string, clearCache = true) {
  */
 export async function saveDocument(docStr: string, filePath: string, fileHeaderDocStr?: string): Promise<void> {
   return new Promise((resolve, reject) => {
+    const dir = path.dirname(filePath)
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true })
+    }
+    try {
+      fs.writeFileSync(filePath, docStr, 'utf-8')
+      resolve(void 0)
+    } catch (error: any) {
+      log.error(error, true)
+      reject()
+    }
+  })
+}
+
+/**
+ * 保存请求文件
+ * @param docStr
+ * @param filePath
+ */
+export async function saveRequestDocument(docStr: string, filePath: string, fileHeaderDocStr?: string): Promise<void> {
+  return new Promise((resolve, reject) => {
     if (!fs.existsSync(filePath)) {
       // const dir = path.dirname(filePath)
       // fs.mkdirSync(dir, { recursive: true })

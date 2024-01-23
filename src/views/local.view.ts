@@ -1,4 +1,5 @@
 import fs from 'fs'
+import espree from 'espree'
 import path from 'path'
 import vscode, { StatusBarItem } from 'vscode'
 
@@ -16,10 +17,11 @@ export interface ExtLocalItemOptions {
 export class ViewLocal extends BaseTreeProvider<LocalItem> {
   public statusBarItem: StatusBarItem = vscode.window.createStatusBarItem()
   public localFilesList: FileHeaderInfo[] = []
-  public localFilesMap = new Map<string, FileHeaderInfo>()
+  public localFilesMap = new Map<string, FileHeaderInfo | FileHeaderInfo[]>()
 
   // private localPath = path.resolve(WORKSPACE_PATH || '', config.extConfig.savePath)
   public allSavePath = this.getAllSavePath()
+  public allRequestSavePath = this.getAllRequestSavePath()
   public viewList: ViewList
 
   constructor(viewList: ViewList) {
@@ -53,12 +55,27 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
     const allSavePath = [path.resolve(WORKSPACE_PATH || '', savePath)]
 
     swaggerJsonUrl.forEach((v) => {
-      if (v.savePath) {
-        allSavePath.push(path.resolve(WORKSPACE_PATH || '', v.savePath))
+      const absSavePath = path.resolve(WORKSPACE_PATH || '', v.savePath || '')
+      if (v.savePath && !allSavePath.includes(absSavePath)) {
+        allSavePath.push(absSavePath)
       }
     })
 
     return allSavePath
+  }
+  /** 获取所有本地请求文件保存路径 */
+  getAllRequestSavePath() {
+    const { swaggerJsonUrl, copyRequestSavePath } = config.extConfig
+    const allRequestSavePath = [path.resolve(WORKSPACE_PATH || '', copyRequestSavePath)]
+
+    swaggerJsonUrl.forEach((v) => {
+      const absCopyRequestSavePath = path.resolve(WORKSPACE_PATH || '', v.copyRequestSavePath || '')
+      if (v.copyRequestSavePath && !allRequestSavePath.includes(absCopyRequestSavePath)) {
+        allRequestSavePath.push(absCopyRequestSavePath)
+      }
+    })
+
+    return allRequestSavePath
   }
 
   /** 初始化本地文件 */
@@ -77,6 +94,23 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
             localFiles.push(filePath)
             this.localFilesMap.set(filePath, fileInfo)
           }
+        })
+      } else {
+        log.warn('<initLocalFiles> localPath does not exist')
+      }
+    })
+    this.allRequestSavePath.forEach((savePath) => {
+      if (fs.existsSync(savePath)) {
+        fs.readdirSync(savePath).forEach((file) => {
+          const filePath = path.join(savePath, file)
+          const fileInfoList = this.readLocalRequestFile(filePath)
+          console.log('fileInfo===>', fileInfoList);
+          if (fileInfoList) {
+            localFiles.push(filePath)
+            this.localFilesMap.set(filePath, fileInfoList)
+          }
+            
+          
         })
       } else {
         log.warn('<initLocalFiles> localPath does not exist')
@@ -126,6 +160,39 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
     }
   }
 
+  /** 读取本地请求文件 */
+  readLocalRequestFile(fileName: string, text?: string): FileHeaderInfo[] | undefined {
+    try {
+      // 读取文件内容
+      const fileStr = text || fs.readFileSync(fileName, 'utf-8') 
+      const headerStrList = fileStr.match(
+        /\/\*\*([\s\S]*?)\*\/\nexport\sconst\s[\S]*\s/gs
+      )
+      // const pathList = fileStr.match(/\`([\S]*?)\`\p{P}/gs)
+      const headerInfoList: FileHeaderInfo[] = []
+      headerStrList?.forEach((headerStr: string) => {
+        const headerInfo: FileHeaderInfo = {
+          fileName: fileName.replace(/^.+\/(.+?)(\.d)?\.{.+}$/, ''),
+          filePath: fileName,
+          ext: fileName.replace(/^.+\.(.+)$/, '$1'),
+        }
+        const infoList = headerStr.split('export const ')
+        if (infoList.length > 1) {
+          headerInfo['namespace'] = infoList[1]
+          headerInfo['update'] = new Date().toLocaleString()
+          infoList[0].replace(/\*\s*@([^\s]+)[^\S\n]*([^\n]*?)\r?\n/g, (_, key, value) => {
+            headerInfo[key] = value || true
+            return ''
+          })
+        }
+        headerInfoList.push(headerInfo)
+      })
+      return headerInfoList;
+    } catch (error) {
+      log.error(`Read File Error - ${fileName}`)
+    }
+  }
+
   /** 更新所有本地接口 */
   public updateAll() {
     const statusBarItemText = `$(cloud-download) ${localize.getLocalize('text.updateButton')}`
@@ -147,14 +214,16 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
           let increment = 0
           progress.report({ increment })
 
-          for (const [key, item] of this.localFilesMap) {
+          const updateFunc = async (key: any, item: any) => {
             if (item.ignore) {
               log.info(`<updateAll> ignored. (${item.filePath})`)
-              continue
+              // continue
+              return false
             }
             if (!item.namespace) {
               log.error(`<updateAll> namespace is undefined. (${item.filePath})`, false)
-              continue
+              // continue
+              return false
             }
             const swaggerItem = this.viewList.getInterFacePathNameMap(
               item.namespace,
@@ -162,7 +231,8 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
             ) as unknown as TreeInterface
             if (!swaggerItem) {
               log.error(`<updateAll> swaggerItem is undefined. (${item.filePath})`, false)
-              continue
+              // continue
+              return false
             }
 
             await this.viewList
@@ -188,6 +258,13 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
 
             progress.report({ increment, message: key })
             increment += unit
+          }
+          for (const [key, item] of this.localFilesMap) {
+            if (Array.isArray(item)) {
+              item.map((i) => updateFunc(key, i))
+            } else {
+              updateFunc(key, item)
+            }
           }
 
           resolve(void 0)
@@ -251,9 +328,16 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
   /** 重新生成本地文件列表 */
   public refactorLocalFilesList() {
     this.localFilesList = []
-    this.localFilesMap.forEach((val) => {
-      this.localFilesList.push(val)
-    })
+    // this.localFilesMap.forEach((val) => {
+    //   this.localFilesList.push(val)
+    // })
+    for (const [key, item] of this.localFilesMap) {
+      if (Array.isArray(item)) {
+        item.forEach((i) => this.localFilesList.push(i))
+      } else {
+        this.localFilesList.push(item)
+      }
+    }
     this._onDidChangeTreeData.fire(undefined)
   }
 

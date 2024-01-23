@@ -19,6 +19,7 @@ import {
   log,
   SwaggerJsonUrlItem,
   saveDocument,
+  saveRequestDocument,
   WORKSPACE_PATH,
   localize,
   showLoading,
@@ -291,7 +292,7 @@ export class ViewList extends BaseTreeProvider<ListItem> {
     const savePath = item.savePath ? path.resolve(WORKSPACE_PATH || '', item.savePath) : this.globalSavePath
 
     const filePathH = filePath ?? path.join(savePath, `${item.pathName}.d.ts`)
-    const nextStr = renderToInterface(item)
+    const nextStr = renderToInterface(item) // 渲染ts interface的关键步骤
 
     if (compareChanges && fs.existsSync(filePathH)) {
       const currentStr = fs.readFileSync(filePathH, 'utf-8')
@@ -367,9 +368,9 @@ export class ViewList extends BaseTreeProvider<ListItem> {
 const serverName = '${serverName}'
 `
       if (typeof str === 'string') {
-        saveDocument(str, filePathH, fileHeaderDoc)
+        saveRequestDocument(str, filePathH, fileHeaderDoc)
       } else {
-        saveDocument(str.join('\n'), filePathH, fileHeaderDoc)
+        saveRequestDocument(str.join('\n'), filePathH, fileHeaderDoc)
       }
     } else {
       log.error('<copyRequest> copyRequest is undefined.', true)

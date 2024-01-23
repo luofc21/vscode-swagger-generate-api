@@ -91,5 +91,7 @@ declare global {
     ignore?: boolean
     /** 接口保存目录 */
     savePath?: string
+    /** 接口参数*/
+    params?: string
   }
 }
