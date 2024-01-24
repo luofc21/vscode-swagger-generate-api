@@ -110,10 +110,10 @@ export function registerLocalCommands(viewList: ViewList, viewLocal: ViewLocal) 
 
     /** 复制请求代码 */
     copyRequest(e: any) {
-      console.log('e===>', e);
+      // console.log('e===>', e);
       const filePath = e.path || e.options.filePath
       const fileInfo: any = viewLocal.readLocalFile(filePath)
-      console.log('fileInfo===>', fileInfo);
+      // console.log('fileInfo===>', fileInfo);
 
       if (!fileInfo) {
         return log.error('<copyRequest> fileInfo error.', true)

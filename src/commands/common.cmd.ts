@@ -71,7 +71,30 @@ export function registerCommonCommands(viewList: ViewList, viewLocal: ViewLocal)
         })
     },
 
-    /**  */
+    /** 自动填充请求参数*/
+    autofill() {
+      /** 获取当前文档编辑器*/
+      const editor = vscode.window.activeTextEditor
+      /** 获取当前光标所在位置*/
+      const position = editor?.selection.active
+      /** 获取当前行文本内容，并通过正则匹配到方法名*/
+      const lineText = position ? editor?.document.lineAt(position)?.text : ''
+      const reqName = lineText.match(/await\s+([^\(\)]+)\(/)?.[1] || ''
+
+      /** 查找ViewLocal中namespace与docStr相匹配的方法*/
+      const reuqest = viewLocal.findLocalFileByNamespace(reqName)
+      if(reuqest) {
+        const params = reuqest.params
+        /** 在光标位置插入代码片段*/
+        if(position && params) {
+          editor?.edit((editBuilder) => {
+            editBuilder.insert(position, params)
+          })
+        }
+      }
+      
+      
+    }
   }
 
   for (const command in commands) {

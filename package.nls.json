@@ -12,6 +12,7 @@
   "command.search": "Search",
   "command.remove": "Remove",
   "command.openLink": "Open in browser",
+  "command.autofill": "Autofill request params",
   "command.saveInterface": "Save request & types code",
   "command.local.updateInterface": "Update interface",
   "command.list.copyRequest": "Save request code",

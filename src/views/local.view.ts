@@ -1,5 +1,4 @@
 import fs from 'fs'
-import espree from 'espree'
 import path from 'path'
 import vscode, { StatusBarItem } from 'vscode'
 
@@ -104,7 +103,7 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
         fs.readdirSync(savePath).forEach((file) => {
           const filePath = path.join(savePath, file)
           const fileInfoList = this.readLocalRequestFile(filePath)
-          console.log('fileInfo===>', fileInfoList);
+          // console.log('fileInfo===>', fileInfoList);
           if (fileInfoList) {
             localFiles.push(filePath)
             this.localFilesMap.set(filePath, fileInfoList)
@@ -178,10 +177,10 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
         }
         const infoList = headerStr.split('export const ')
         if (infoList.length > 1) {
-          headerInfo['namespace'] = infoList[1]
+          headerInfo['namespace'] = infoList[1].trim()
           headerInfo['update'] = new Date().toLocaleString()
           infoList[0].replace(/\*\s*@([^\s]+)[^\S\n]*([^\n]*?)\r?\n/g, (_, key, value) => {
-            headerInfo[key] = value || true
+            headerInfo[key] = value.trim() || true
             return ''
           })
         }
@@ -357,6 +356,12 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
     this.allSavePath = this.getAllSavePath()
     this.initStatusBarItem()
     this.refresh()
+  }
+
+  /** 通过namespace在localFileList中查找某个文件*/
+  public findLocalFileByNamespace(namespace: string): FileHeaderInfo | undefined {
+    const item = this.localFilesList.find((item) => item.namespace === namespace)
+    return item
   }
 
   /** 销毁时释放资源 */

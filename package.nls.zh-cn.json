@@ -12,6 +12,7 @@
   "command.search": "搜索",
   "command.remove": "删除",
   "command.openLink": "在浏览器中打开",
+  "command.autofill": "自动填充请求参数",
   "command.saveInterface": "保存接口请求和类型",
   "command.local.updateInterface": "更新接口",
   "command.list.copyRequest": "保存接口请求",

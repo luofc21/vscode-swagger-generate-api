@@ -26,6 +26,11 @@
       {
         "command": "cmd.list.search",
         "key": "alt+shift+f"
+      },
+      {
+        "command": "cmd.common.autofill",
+        "key": "alt+shift+q",
+        "when": "editorTextFocus"
       }
     ],
     "commands": [
@@ -94,6 +99,11 @@
         "command": "cmd.common.openLink",
         "title": "%command.openLink%",
         "icon": "$(link-external)"
+      },
+      {
+        "command": "cmd.common.autofill",
+        "title": "%command.autofill%",
+        "icon": "$(gear)"
       },
       {
         "command": "cmd.template.edit",
