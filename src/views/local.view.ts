@@ -174,6 +174,7 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
           fileName: fileName.replace(/^.+\/(.+?)(\.d)?\.{.+}$/, ''),
           filePath: fileName,
           ext: fileName.replace(/^.+\.(.+)$/, '$1'),
+          isRequest: true
         }
         const infoList = headerStr.split('export const ')
         if (infoList.length > 1) {
@@ -310,6 +311,7 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
       collapsible: 0,
       filePath: item.filePath,
       namespace: item.namespace,
+      isRequest: item.isRequest,
       command: {
         title,
         command: 'cmd.common.openFile',
@@ -332,9 +334,15 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
     // })
     for (const [key, item] of this.localFilesMap) {
       if (Array.isArray(item)) {
-        item.forEach((i) => this.localFilesList.push(i))
+        item.forEach((i) => {
+          if (!this.localFilesList.some((file) =>file.namespace === i.namespace)) {
+            this.localFilesList.push(i)
+          }
+        })
       } else {
-        this.localFilesList.push(item)
+        if (!this.localFilesList.some((file) =>file.namespace === item.namespace)) {
+          this.localFilesList.push(item)
+        }
       }
     }
     this._onDidChangeTreeData.fire(undefined)
@@ -362,6 +370,15 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
   public findLocalFileByNamespace(namespace: string): FileHeaderInfo | undefined {
     const item = this.localFilesList.find((item) => item.namespace === namespace)
     return item
+  }
+
+  /** 通过localItem的filePath在localFileList中查找某个请求，并删除本地文件中的该请求*/
+  public deleteRequest(localItem: string): void {
+    // const item = this.localFilesList.find((item) => item.filePath === localItem.options.filePath)
+    // if (item) {
+    //   this.localFilesList.splice(this.localFilesList.indexOf(item), 1)
+    //   this._onDidChangeTreeData.fire(undefined)
+    // }
   }
 
   /** 销毁时释放资源 */

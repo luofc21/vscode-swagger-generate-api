@@ -93,5 +93,7 @@ declare global {
     savePath?: string
     /** 接口参数*/
     params?: string
+    /** 请求or类型*/
+    isRequest?: boolean
   }
 }

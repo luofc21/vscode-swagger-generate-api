@@ -344,6 +344,48 @@ export class ViewList extends BaseTreeProvider<ListItem> {
     this.refresh()
   }
 
+  /** 调整请求参数 */
+  adjustRequestParams(itemSource: TreeInterface) {
+    const pathParams = itemSource.path.match(/\{[\w | \-]*\}/g)
+    const pathParamsArr: string[] = []
+    let bodyParams: string | null = ''
+    let bodyParamsDesc: string | null = ''
+    if (pathParams) {
+      pathParams.map((param: string) => {
+        const newParam = param.slice(1, -1)
+        itemSource.path = itemSource.path.replace(param, `$\{params.${newParam}\}`)
+        pathParamsArr.push(newParam)
+      })
+      if (Array.isArray(itemSource.params)) {
+        itemSource.params.forEach((param: any) => {
+          if (!pathParamsArr.includes(param.name)) {
+            bodyParams += `${param.name}: params.${param.name}, `
+          }
+          bodyParamsDesc += `${param.name}: ${param.type}, `
+        })
+      } else {
+        if (!pathParamsArr.includes(itemSource.params.name)) {
+          bodyParams = `params`
+        }
+        bodyParamsDesc = `${itemSource.params.name}: ${itemSource.params.type}`
+      }
+      bodyParamsDesc = bodyParamsDesc ? `{ ${bodyParamsDesc.trim().slice(0, -1)} }` : null
+      bodyParams = bodyParams ? `{ ${bodyParams.trim().slice(0, -1)} }` : null
+    } else {
+      if (Array.isArray(itemSource.params)) {
+        itemSource.params.forEach(param => {
+          bodyParamsDesc += `${param.name}: ${param.type}, `
+        })
+      } else {
+        bodyParamsDesc = `${itemSource.params.name}: ${itemSource.params.type}`
+      }
+      bodyParamsDesc = bodyParamsDesc ? `{ ${bodyParamsDesc.trim().slice(0, -1)} }` : null
+      bodyParams = bodyParamsDesc ? `params` : null
+    }
+    const newItem = Object.assign({}, itemSource, { params: bodyParams, paramsDesc: bodyParamsDesc })
+    return newItem
+  }
+
   /** 保存请求代码 */
   public async copyRequest(
     itemSource: TreeInterface | ListItem | SwaggerJsonUrlItem,
@@ -356,7 +398,8 @@ export class ViewList extends BaseTreeProvider<ListItem> {
     if (!item.pathName) return Promise.reject('SaveInterface Error')
     const request = isSaveTypes ? templateConfig.copyRequestTS : templateConfig.copyRequest
     if (request) {
-      const str = request(item)
+      const newItem = this.adjustRequestParams(item)
+      const str = request(newItem)
       /** 生成请求文件&代码 */
       const globalCopyRequestSavePath = config.extConfig.copyRequestSavePath
       const savePath = path.resolve(WORKSPACE_PATH || '', globalCopyRequestSavePath)
