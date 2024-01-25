@@ -373,13 +373,33 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
   }
 
   /** 通过localItem的filePath在localFileList中查找某个请求，并删除本地文件中的该请求*/
-  public deleteRequest(localItem: string): void {
-    // const item = this.localFilesList.find((item) => item.filePath === localItem.options.filePath)
-    // if (item) {
-    //   this.localFilesList.splice(this.localFilesList.indexOf(item), 1)
-    //   this._onDidChangeTreeData.fire(undefined)
-    // }
+  public deleteRequest(localItem: LocalItem): void {
+    const fileStr = fs.readFileSync(localItem.options.filePath, 'utf-8')
+    this.removeExportByNameRegex(fileStr, localItem.options.namespace || '', localItem.options.filePath)
   }
+
+  /** 使用正则表达式解析代码，删除指定的export及其只注释*/
+  async removeExportByNameRegex(code: string, methodNameToRemove: string, filePath: string) {
+    return new Promise((resolve, reject) => {
+      if (!fs.existsSync(filePath)) {
+        return reject()
+      }
+      try {
+        const regexp = new RegExp(`\\/\\*[^\\/]*\\*\\/\\n?export\\sconst\\s${methodNameToRemove}\\s*=\\s*\\([^]*?\\)\\s*=>([\\s\\S]*?)\\)`,'gs')
+        const updatedData = code.replace(regexp, '')
+        fs.writeFileSync(filePath, updatedData, 'utf-8')
+        resolve(void 0)
+      } catch (error: any) {
+        log.error(error, true)
+        reject()
+      }
+    })
+    
+  }
+  // /** 使用babel解析代码，删除指定的export*/
+  // removeExportByName(code: string, methodNameToRemove: string) {
+  //   // 解析为AST......
+  // }
 
   /** 销毁时释放资源 */
   destroy(): void {}

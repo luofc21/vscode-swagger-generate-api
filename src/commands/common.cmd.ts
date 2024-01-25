@@ -52,6 +52,7 @@ export function registerCommonCommands(viewList: ViewList, viewLocal: ViewLocal)
     deleteFile(path: string | LocalItem) {
       const pathH = typeof path === 'string' ? path : path.options.filePath
       if (!pathH) return log.error(localize.getLocalize('error.path'), true)
+      const isRequest = typeof path === 'string' ? false : !!path.options.isRequest
 
       const confirmText = localize.getLocalize('text.confirm')
       const cancelText = localize.getLocalize('text.cancel')
@@ -61,7 +62,15 @@ export function registerCommonCommands(viewList: ViewList, viewLocal: ViewLocal)
         .then((res) => {
           if (res === confirmText) {
             try {
-              fs.unlinkSync(pathH)
+              if (isRequest) {
+                /** 如果是请求，删除请求，刷新列表 */
+                viewLocal.deleteRequest(path as LocalItem)
+              } else {
+                /** 如果是请求+类型，删除请求与类型文件*/
+                // viewLocal.deleteRequest(path as LocalItem)
+                fs.unlinkSync(pathH)
+              }
+              
               log.info(`Remove file: ${pathH}`)
               viewLocal.refresh()
             } catch (error) {

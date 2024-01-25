@@ -16,6 +16,8 @@ export interface BaseTreeItemOptions {
   /** 选中事件 */
   command?: vscode.Command
   contextValue?: string
+  /** 是types类型文件还是api请求*/
+  isRequest?: boolean
 }
 
 /**
