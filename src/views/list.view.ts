@@ -387,7 +387,7 @@ export class ViewList extends BaseTreeProvider<ListItem> {
   }
 
   /** 保存请求代码 */
-  public async copyRequest(
+  public async saveRequest(
     itemSource: TreeInterface | ListItem | SwaggerJsonUrlItem,
     filePath?: string,
     isSaveTypes?: boolean
@@ -396,17 +396,17 @@ export class ViewList extends BaseTreeProvider<ListItem> {
     console.log('request.item===>', item );
     const { compareChanges } = config.extConfig
     if (!item.pathName) return Promise.reject('SaveInterface Error')
-    const request = isSaveTypes ? templateConfig.copyRequestTS : templateConfig.copyRequest
+    const request = isSaveTypes ? templateConfig.saveRequestTS : templateConfig.saveRequest
     if (request) {
       const newItem = this.adjustRequestParams(item)
       const str = request(newItem)
       /** 生成请求文件&代码 */
-      const globalCopyRequestSavePath = config.extConfig.copyRequestSavePath
-      const savePath = path.resolve(WORKSPACE_PATH || '', globalCopyRequestSavePath)
+      const globalSaveRequestSavePath = config.extConfig.requestSavePath
+      const savePath = path.resolve(WORKSPACE_PATH || '', globalSaveRequestSavePath)
       const serverName = item.basePath.slice(1)
       const filePathH = path.join(savePath, `${serverName}.js`)
       const fileHeaderDoc = 
-`${config.extConfig.copyRequestHeaderDoc}
+`${config.extConfig.requestHeaderDoc}
 
 const serverName = '${serverName}'
 `
@@ -416,18 +416,18 @@ const serverName = '${serverName}'
         saveRequestDocument(str.join('\n'), filePathH, fileHeaderDoc)
       }
     } else {
-      log.error('<copyRequest> copyRequest is undefined.', true)
+      log.error('<saveRequest> saveRequest is undefined.', true)
     }
   }
   /** 批量保存请求代码 */
-  public async copyRequestGroup(item: ListItem, isSaveTypes?: boolean) {
+  public async saveRequestGroup(item: ListItem, isSaveTypes?: boolean) {
     return new Promise(async (resolve, reject) => {
       // await this._refresh()
       const listData = this.swaggerJsonMap.get(item.options.configItem.url) || []
       const itemChildren: ListItem[] | undefined = listData.find((x) => x.key === item.options.key)?.children
       if (itemChildren && itemChildren.length) {
         for (let index = 0; index < itemChildren.length; index++) {
-          await this.copyRequest(itemChildren[index])
+          await this.saveRequest(itemChildren[index])
         }
         resolve(void 0)
       } else {

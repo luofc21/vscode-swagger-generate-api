@@ -10,26 +10,26 @@
 
 ## Config
 
-| 名称                                     | 说明                                                               | 类型                                        | 默认                       |
-| ---------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------- | -------------------------- |
-| swaggerToTypes.swaggerJsonUrl            | Swagger API 列表                                                   | [SwaggerJsonUrlItem](#SwaggerJsonUrlItem)[] | []                         |
-| swaggerToTypes.swaggerJsonHeaders        | 追加请求头 (全局)                                                  | object                                      | {}                         |
-| swaggerToTypes.savePath                  | `.d.ts` 接口文件保存路径                                           | string                                      | 'types/swagger-interfaces' |
-| swaggerToTypes.showStatusbarItem         | 显示状态栏按钮                                                     | boolean                                     | `true`                     |
-| swaggerToTypes.compareChanges            | 是否在更新接口时比对更改 (无更改不更新)                            | boolean                                     | `true`                     |
-| swaggerToTypes.reloadWhenSettingsChanged | 当用户设置更改时重新加载数据. (在某些频繁刷新设置的情况下需要关闭) | boolean                                     | `true`                     |
+| 名称                                         | 说明                                                               | 类型                                        | 默认                       |
+| -------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------- | -------------------------- |
+| swaggerGenerateApi.swaggerJsonUrl            | Swagger API 列表                                                   | [SwaggerJsonUrlItem](#SwaggerJsonUrlItem)[] | []                         |
+| swaggerGenerateApi.swaggerJsonHeaders        | 追加请求头 (全局)                                                  | object                                      | {}                         |
+| swaggerGenerateApi.savePath                  | `.d.ts` 接口文件保存路径                                           | string                                      | 'types/swagger-interfaces' |
+| swaggerGenerateApi.showStatusbarItem         | 显示状态栏按钮                                                     | boolean                                     | `true`                     |
+| swaggerGenerateApi.compareChanges            | 是否在更新接口时比对更改 (无更改不更新)                            | boolean                                     | `true`                     |
+| swaggerGenerateApi.reloadWhenSettingsChanged | 当用户设置更改时重新加载数据. (在某些频繁刷新设置的情况下需要关闭) | boolean                                     | `true`                     |
 
 ## SwaggerJsonUrlItem
 
-| 属性                | 说明                               | 类型   | 是否必填 |
-| ------------------- | ---------------------------------- | ------ | -------- |
-| title               | 项目标题                           | string | \*       |
-| url                 | swagger json url                   | string | \*       |
-| link                | 在浏览器打开外部链接               | string |          |
-| basePath            | basePath                           | string |          |
-| headers             | 自定义请求头信息 (如鉴权 Token 等) | object |          |
-| savePath            | `.d.ts` 文件保存路径               | string |          |
-| copyRequestSavePath | copyRequest请求保存路径            | string |          |
+| 属性            | 说明                               | 类型   | 是否必填 |
+| --------------- | ---------------------------------- | ------ | -------- |
+| title           | 项目标题                           | string | \*       |
+| url             | swagger json url                   | string | \*       |
+| link            | 在浏览器打开外部链接               | string |          |
+| basePath        | basePath                           | string |          |
+| headers         | 自定义请求头信息 (如鉴权 Token 等) | object |          |
+| savePath        | `.d.ts` 文件保存路径               | string |          |
+| requestSavePath | requestSavePath                    | string |          |
 
 ## 快捷键
 
@@ -64,7 +64,7 @@
 | paramsItem   | TreeInterfacePropertiesItem, TreeInterface | string             |
 | response     | TreeInterface                              | string             |
 | responseItem | TreeInterfacePropertiesItem, TreeInterface | string             |
-| copyRequest  | FileHeaderInfo                             | string \| string[] |
+| saveRequest  | FileHeaderInfo                             | string \| string[] |
 
 详细类型参考 [TemplateBaseType](src/tools/get-templates.ts#L11)
 
@@ -97,7 +97,7 @@ function toUp(str) {
 }
 
 function paramsItem(item, params) {
-  // 项目标题(swaggerToTypes.swaggerJsonUrl[number].title) 为 demo-1 时忽略定制方案
+  // 项目标题(swaggerGenerateApi.swaggerJsonUrl[number].title) 为 demo-1 时忽略定制方案
   if (params.groupName === 'demo-1') return
 
   return `${toUp(item.name)}${item.required ? ':' : '?:'} ${item.type}`
@@ -112,7 +112,7 @@ module.exports = { paramsItem }
 
 编辑 `.vscode/swagger-to-types.template.js` 文件
 
-如果导出了 `copyRequest` 函数，即可使用此功能
+如果导出了 `saveRequest` 函数，即可使用此功能
 
 相关按钮将出现在这几个位置：
 
@@ -140,7 +140,7 @@ module.exports = { paramsItem }
  * }} fileInfo
  * @returns
  */
-function copyRequest(fileInfo) {
+function saveRequest(fileInfo) {
   return [
     `/** ${fileInfo.name} */`,
     `export async function unnamed(params?: ${fileInfo.namespace}.Params, options?: RequestOptions) {`,
@@ -156,7 +156,7 @@ function copyRequest(fileInfo) {
 
 module.exports = {
   // ...
-  copyRequest,
+  saveRequest,
 }
 ```
 

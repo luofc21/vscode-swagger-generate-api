@@ -119,8 +119,8 @@ export function registerLocalCommands(viewList: ViewList, viewLocal: ViewLocal) 
         return log.error('<copyRequest> fileInfo error.', true)
       }
 
-      if (templateConfig.copyRequest) {
-        const str = templateConfig.copyRequest(fileInfo)
+      if (templateConfig.saveRequest) {
+        const str = templateConfig.saveRequest(fileInfo)
         /** 复制请求到剪贴板 */
         if (typeof str === 'string') {
           vscode.env.clipboard.writeText(str)

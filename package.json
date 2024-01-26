@@ -55,7 +55,7 @@
       {
         "command": "cmd.list.saveInterface",
         "title": "%command.saveInterface%",
-        "icon": "$(cloud-download)"
+        "icon": "$(save-all)"
       },
       {
         "command": "cmd.local.refresh",
@@ -75,13 +75,13 @@
         "icon": "$(cloud-download)"
       },
       {
-        "command": "cmd.list.copyRequest",
-        "title": "%command.list.copyRequest%",
-        "icon": "$(copy)"
+        "command": "cmd.list.saveRequest",
+        "title": "%command.list.saveRequest%",
+        "icon": "$(save)"
       },
       {
         "command": "cmd.local.copyRequest",
-        "title": "%command.list.copyRequest%",
+        "title": "%command.local.copyRequest%",
         "icon": "$(copy)"
       },
       {
@@ -117,7 +117,7 @@
         {
           "id": "swagger-to-types",
           "title": "%app.title%",
-          "icon": "assets/icons/tree-view.dark.svg"
+          "icon": "assets/icons/tree-icon.svg"
         }
       ]
     },
@@ -158,14 +158,14 @@
     "menus": {
       "editor/title": [
         {
-          "command": "cmd.list.copyRequest",
+          "command": "cmd.list.saveRequest",
           "group": "navigation@01",
-          "when": "editorLangId == typescript && swaggerToTypes.hasCopyRequestFn == 1 && resourcePath in swaggerToTypes.localFiles"
+          "when": "editorLangId == typescript && swaggerGenerateApi.hasSaveRequestFn == 1 && resourcePath in swaggerGenerateApi.localFiles"
         },
         {
           "command": "cmd.local.updateInterface",
           "group": "navigation@02",
-          "when": "editorLangId == typescript && resourcePath in swaggerToTypes.localFiles"
+          "when": "editorLangId == typescript && resourcePath in swaggerGenerateApi.localFiles"
         }
       ],
       "view/title": [
@@ -217,14 +217,14 @@
           "when": "view == view.list && viewItem == interface || viewItem == group"
         },
         {
-          "command": "cmd.list.copyRequest",
+          "command": "cmd.list.saveRequest",
           "group": "inline@08",
-          "when": "view == view.list && swaggerToTypes.hasCopyRequestFn == 1"
+          "when": "view == view.list && swaggerGenerateApi.hasSaveRequestFn == 1"
         },
         {
           "command": "cmd.local.copyRequest",
           "group": "inline@08",
-          "when": "view == view.local && swaggerToTypes.hasCopyRequestFn == 1"
+          "when": "view == view.local && swaggerGenerateApi.hasSaveRequestFn == 1"
         },
         {
           "command": "cmd.local.updateInterface",
@@ -244,44 +244,44 @@
       ]
     },
     "configuration": {
-      "title": "swaggerToTypes",
+      "title": "swaggerGenerateApi",
       "properties": {
-        "swaggerToTypes.swaggerJsonUrl": {
+        "swaggerGenerateApi.swaggerJsonUrl": {
           "type": "array",
           "default": [],
           "description": "%text.config.swaggerJsonUrl%"
         },
-        "swaggerToTypes.swaggerJsonHeaders": {
+        "swaggerGenerateApi.swaggerJsonHeaders": {
           "type": "object",
           "default": {},
           "description": "%text.config.swaggerJsonHeaders%"
         },
-        "swaggerToTypes.savePath": {
+        "swaggerGenerateApi.savePath": {
           "type": "string",
           "description": "%text.config.savePath%",
           "default": "types/swagger-interfaces"
         },
-        "swaggerToTypes.copyRequestSavePath": {
+        "swaggerGenerateApi.requestSavePath": {
           "type": "string",
-          "description": "%text.config.copyRequestSavePath%",
+          "description": "%text.config.requestSavePath%",
           "default": "src/api"
         },
-        "swaggerToTypes.copyRequestHeaderDoc": {
+        "swaggerGenerateApi.requestHeaderDoc": {
           "type": "string",
-          "description": "%text.config.copyRequestHeaderDoc%",
+          "description": "%text.config.requestHeaderDoc%",
           "default": "import { get, post } from '@/utils/request'"
         },
-        "swaggerToTypes.showStatusbarItem": {
+        "swaggerGenerateApi.showStatusbarItem": {
           "type": "boolean",
           "description": "%text.config.showStatusbarItem%",
           "default": true
         },
-        "swaggerToTypes.compareChanges": {
+        "swaggerGenerateApi.compareChanges": {
           "type": "boolean",
           "description": "%text.config.compareChanges%",
           "default": true
         },
-        "swaggerToTypes.reloadWhenSettingsChanged": {
+        "swaggerGenerateApi.reloadWhenSettingsChanged": {
           "type": "boolean",
           "description": "%text.config.reloadWhenSettingsChanged%",
           "default": true

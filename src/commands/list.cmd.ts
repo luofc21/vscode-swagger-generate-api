@@ -152,17 +152,17 @@ export function registerListCommands({
               )
             })
           viewList
-            .copyRequestGroup(item)
+            .saveRequestGroup(item)
             .then(() => {
               log.info(
-                `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize('success')}`,
+                `${localize.getLocalize('command.list.saveRequest')} <${item.label}> ${localize.getLocalize('success')}`,
                 true
               )
               viewLocal.refresh()
             })
             .catch((err) => {
               log.error(
-                `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize(
+                `${localize.getLocalize('command.list.saveRequest')} <${item.label}> ${localize.getLocalize(
                   'failed'
                 )} ${err}`,
                 true
@@ -203,17 +203,17 @@ export function registerListCommands({
             })
           /** 保存请求 */
           viewList
-          .copyRequest(interfaceItem, '', true)
+          .saveRequest(interfaceItem, '', true)
           .then(() => {
             log.info(
-              `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize('success')}`,
+              `${localize.getLocalize('command.list.saveRequest')} <${item.label}> ${localize.getLocalize('success')}`,
               true
             )
             viewLocal.refresh()
           })
           .catch((err) => {
             log.error(
-              `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize(
+              `${localize.getLocalize('command.list.saveRequest')} <${item.label}> ${localize.getLocalize(
                 'failed'
               )} ${err}`,
               true
@@ -238,14 +238,14 @@ export function registerListCommands({
     },
 
     /** 保存请求代码 (单个/批量) */
-    copyRequest(item: ListItem) {
+    saveRequest(item: ListItem) {
       switch (item.options.type) {
         case 'group':
           viewList
-            .copyRequestGroup(item)
+            .saveRequestGroup(item)
             .then(() => {
               log.info(
-                `${localize.getLocalize('command.list.copyRequest')}(${localize.getLocalize('text.group')}) <${
+                `${localize.getLocalize('command.list.saveRequest')}(${localize.getLocalize('text.group')}) <${
                   item.label
                 }> ${localize.getLocalize('success')}`,
                 false
@@ -255,7 +255,7 @@ export function registerListCommands({
             })
             .catch((err) => {
               log.error(
-                `${localize.getLocalize('command.list.copyRequest')}(${localize.getLocalize('text.group')}) <${
+                `${localize.getLocalize('command.list.saveRequest')}(${localize.getLocalize('text.group')}) <${
                   item.label
                 }> ${localize.getLocalize('failed')} ${err}`,
                 true
@@ -277,17 +277,17 @@ export function registerListCommands({
           }
 
           viewList
-            .copyRequest(interfaceItem)
+            .saveRequest(interfaceItem)
             .then(() => {
               log.info(
-                `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize('success')}`,
+                `${localize.getLocalize('command.list.saveRequest')} <${item.label}> ${localize.getLocalize('success')}`,
                 true
               )
               viewLocal.refresh()
             })
             .catch((err) => {
               log.error(
-                `${localize.getLocalize('command.list.copyRequest')} <${item.label}> ${localize.getLocalize(
+                `${localize.getLocalize('command.list.saveRequest')} <${item.label}> ${localize.getLocalize(
                   'failed'
                 )} ${err}`,
                 true

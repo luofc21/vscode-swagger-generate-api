@@ -25,8 +25,8 @@ export interface SwaggerJsonUrlItem {
   basePath?: string
   /** `.d.ts` 文件保存路径 (独立) */
   savePath?: string
-  /** copyRequest请求保存路径 (独立) */
-  copyRequestSavePath?: string
+  /** saveRequest请求保存路径 (独立) */
+  requestSavePath?: string
   /** 追加请求头 */
   headers?: Record<string, string>
 }
@@ -39,10 +39,10 @@ export interface CodeConfig {
   swaggerJsonHeaders?: Record<string, string>
   /** `.d.ts` 文件保存路径 (公共) */
   savePath: string
-  /** copyRequest请求保存路径 (公共) */
-  copyRequestSavePath: string
-  /** copyRequest请求文件头部文档 (公共) */
-  copyRequestHeaderDoc: string
+  /** saveRequest请求保存路径 (公共) */
+  requestSavePath: string
+  /** saveRequest请求文件头部文档 (公共) */
+  requestHeaderDoc: string
   /** 是否显示状态栏按钮 */
   showStatusbarItem: boolean
   /** 是否在更新接口时比对更改 (无更改不更新) */

@@ -77,11 +77,11 @@ export class CodelensProviderLocal implements vscode.CodeLensProvider {
   public provideCodeLenses(doc: vscode.TextDocument): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
     this.codeLenses = []
 
-    if (templateConfig.copyRequest) {
+    if (templateConfig.saveRequest) {
       this.codeLenses.push(
         new vscode.CodeLens(this.HEADER_RANGE, {
-          title: `${localize.getLocalize('command.list.copyRequest')}`,
-          command: 'cmd.list.copyRequest',
+          title: `${localize.getLocalize('command.list.saveRequest')}`,
+          command: 'cmd.list.saveRequest',
           arguments: [{ path: doc.fileName }],
         })
       )

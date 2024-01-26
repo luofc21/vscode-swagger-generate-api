@@ -19,7 +19,7 @@
 * }} treeInterface
 * @returns
 */
-function copyRequest(treeInterface) {
+function saveRequest(treeInterface) {
 
   return [
     `/**
@@ -33,7 +33,7 @@ function copyRequest(treeInterface) {
 /**
  * 请求函数模板（TS）
 */
-function copyRequestTS(treeInterface) {
+function saveRequestTS(treeInterface) {
   return [
     `/**
     * @name ${treeInterface.title}
@@ -54,10 +54,10 @@ function toUp(str) {
 }
 
 function paramsItem(item, params) {
-  // 项目标题(swaggerToTypes.swaggerJsonUrl[number].title) 为 demo-1 时忽略定制方案
+  // 项目标题(swaggerGenerateApi.swaggerJsonUrl[number].title) 为 demo-1 时忽略定制方案
   if (params.groupName === 'demo-1') return
 
   return `${toUp(item.name)}${item.required ? ':' : '?:'} ${item.type}`
 }
 
-module.exports = { paramsItem, copyRequest, copyRequestTS }
+module.exports = { paramsItem, saveRequest, saveRequestTS }

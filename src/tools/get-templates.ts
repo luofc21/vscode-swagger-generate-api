@@ -14,8 +14,8 @@ export interface TemplateBaseType {
   paramsItem?: (item: TreeInterfacePropertiesItem, params: TreeInterface) => string
   response?: (params: TreeInterface) => string
   responseItem?: (item: TreeInterfacePropertiesItem, params: TreeInterface) => string
-  copyRequest?: (params: TreeInterface) => string | string[]
-  copyRequestTS?: (params: TreeInterface) => string | string[]
+  saveRequest?: (params: TreeInterface) => string | string[]
+  saveRequestTS?: (params: TreeInterface) => string | string[]
 }
 
 export let templateConfig: TemplateBaseType = {}
@@ -27,10 +27,10 @@ export function getWorkspaceTemplateConfig(): TemplateBaseType {
     templateConfig = requireModule(workspaceConfigPath)
   }
   console.log('templateConfig===>', templateConfig);
-  if (templateConfig.copyRequest) {
-    vscode.commands.executeCommand('setContext', `${CONFIG_GROUP}.hasCopyRequestFn`, 1)
+  if (templateConfig.saveRequest) {
+    vscode.commands.executeCommand('setContext', `${CONFIG_GROUP}.hasSaveRequestFn`, 1)
   } else {
-    vscode.commands.executeCommand('setContext', `${CONFIG_GROUP}.hasCopyRequestFn`, 0)
+    vscode.commands.executeCommand('setContext', `${CONFIG_GROUP}.hasSaveRequestFn`, 0)
   }
 
   return templateConfig

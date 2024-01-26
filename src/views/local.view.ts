@@ -64,13 +64,13 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
   }
   /** 获取所有本地请求文件保存路径 */
   getAllRequestSavePath() {
-    const { swaggerJsonUrl, copyRequestSavePath } = config.extConfig
-    const allRequestSavePath = [path.resolve(WORKSPACE_PATH || '', copyRequestSavePath)]
+    const { swaggerJsonUrl, requestSavePath } = config.extConfig
+    const allRequestSavePath = [path.resolve(WORKSPACE_PATH || '', requestSavePath)]
 
     swaggerJsonUrl.forEach((v) => {
-      const absCopyRequestSavePath = path.resolve(WORKSPACE_PATH || '', v.copyRequestSavePath || '')
-      if (v.copyRequestSavePath && !allRequestSavePath.includes(absCopyRequestSavePath)) {
-        allRequestSavePath.push(absCopyRequestSavePath)
+      const absRequestSavePath = path.resolve(WORKSPACE_PATH || '', v.requestSavePath || '')
+      if (v.requestSavePath && !allRequestSavePath.includes(absRequestSavePath)) {
+        allRequestSavePath.push(absRequestSavePath)
       }
     })
 
