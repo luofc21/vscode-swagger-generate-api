@@ -6,6 +6,10 @@
 
 每个接口生成一个 `namespace` (用于分组,避免重名), 包含 `Params`, `Response`, 每一个 DTO 都能生成独立的 `interface`.
 
+## 安装
+目前该扩展插件暂不支持从vscode扩展商店安装。但可使用Release中的[.vsix安装包](https://github.com/luofc21/vscode-swagger-generate-api/releases/tag/v2.0.0-alpha)完成插件安装.
+![img](./assets/images/installByVsix.png)
+
 ## 预览
 
 ![img](./assets/images/preview.png)
