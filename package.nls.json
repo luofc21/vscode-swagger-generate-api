@@ -19,6 +19,7 @@
   "command.local.copyRequest": "Copy request code",
   "command.template.edit": "Edit build template",
   "text.search.placeholder": "Please enter keywords",
+  "text.noRequestAutofill": "No local request to autofill params",
   "text.title": "Title",
   "text.swaggerJsonUrl": "Swagger Json Url",
   "text.noWorkspace": "Must be in the workspace",

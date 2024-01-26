@@ -24,10 +24,6 @@
   "contributes": {
     "keybindings": [
       {
-        "command": "cmd.list.search",
-        "key": "alt+shift+f"
-      },
-      {
         "command": "cmd.common.autofill",
         "key": "alt+shift+q",
         "when": "editorTextFocus"

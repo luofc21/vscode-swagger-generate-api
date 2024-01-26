@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import vscode from 'vscode'
-
+import os from 'os'
 import { config, localize, WORKSPACE_PATH, log } from '../tools'
 
 import { ListItem, ViewList } from '../views/list.view'
@@ -93,13 +93,17 @@ export function registerCommonCommands(viewList: ViewList, viewLocal: ViewLocal)
       /** 查找ViewLocal中namespace与docStr相匹配的方法*/
       const reuqest = viewLocal.findLocalFileByNamespace(reqName)
       if(reuqest) {
-        const params = reuqest.params
+        const params = reuqest.params?.replace(/\{/g, '{\n').replace(/\}/g, '\n}').replace(/,/g, ',\n')
+        console.log('autofill params===>', params);
+
         /** 在光标位置插入代码片段*/
         if(position && params) {
           editor?.edit((editBuilder) => {
             editBuilder.insert(position, params)
           })
         }
+      } else {
+        log.warn(localize.getLocalize('text.noRequestAutofill'), true)
       }
       
       

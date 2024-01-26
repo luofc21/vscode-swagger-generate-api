@@ -19,6 +19,7 @@
   "command.local.copyRequest": "复制接口请求",
   "command.template.edit": "编辑生成模板",
   "text.search.placeholder": "请输入关键字",
+  "text.noRequestAutofill": "未找到对应的本地接口用于填充参数",
   "text.title": "标题",
   "text.swaggerJsonUrl": "Swagger Json Url",
   "text.noWorkspace": "需要工作区",
