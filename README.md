@@ -1,6 +1,8 @@
 # swagger-to-types README
 
-将 Swagger JSON 导出为 Typescript interface
+将 Swagger JSON 导出为 Request & Typescript interface
+
+请求函数基于模板函数生成，同一个服务的请求生成一个api文件。在调用请求时使用快捷键 `Shift + Alt + Q` 自动填充请求参数.
 
 每个接口生成一个 `namespace` (用于分组,避免重名), 包含 `Params`, `Response`, 每一个 DTO 都能生成独立的 `interface`.
 
@@ -10,32 +12,94 @@
 
 ## Config
 
-| 名称                                         | 说明                                                               | 类型                                        | 默认                       |
-| -------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------- | -------------------------- |
-| swaggerGenerateApi.swaggerJsonUrl            | Swagger API 列表                                                   | [SwaggerJsonUrlItem](#SwaggerJsonUrlItem)[] | []                         |
-| swaggerGenerateApi.swaggerJsonHeaders        | 追加请求头 (全局)                                                  | object                                      | {}                         |
-| swaggerGenerateApi.savePath                  | `.d.ts` 接口文件保存路径                                           | string                                      | 'types/swagger-interfaces' |
-| swaggerGenerateApi.showStatusbarItem         | 显示状态栏按钮                                                     | boolean                                     | `true`                     |
-| swaggerGenerateApi.compareChanges            | 是否在更新接口时比对更改 (无更改不更新)                            | boolean                                     | `true`                     |
-| swaggerGenerateApi.reloadWhenSettingsChanged | 当用户设置更改时重新加载数据. (在某些频繁刷新设置的情况下需要关闭) | boolean                                     | `true`                     |
+| 名称                                         | 说明                                                               | 类型                                        | 默认                                          |
+| -------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------- | --------------------------------------------- |
+| swaggerGenerateApi.swaggerJsonUrl            | Swagger API 列表                                                   | [SwaggerJsonUrlItem](#SwaggerJsonUrlItem)[] | []                                            |
+| swaggerGenerateApi.swaggerJsonHeaders        | 追加请求头 (全局)                                                  | object                                      | {}                                            |
+| swaggerGenerateApi.savePath                  | `.d.ts` 接口文件保存路径                                           | string                                      | 'types/swagger-interfaces'                    |
+| swaggerGenerateApi.requestSavaPath           | 请求文件保存路径                                                   | string                                      | 'src/api'                                     |
+| swaggerGenerateApi.requestHeaderDoc          | 在请求文件中添加额外代码                                           | string                                      | 'import { get, post } from "@/utils/request"' |
+| swaggerGenerateApi.showStatusbarItem         | 显示状态栏按钮                                                     | boolean                                     | `true`                                        |
+| swaggerGenerateApi.compareChanges            | 是否在更新接口时比对更改 (无更改不更新)                            | boolean                                     | `true`                                        |
+| swaggerGenerateApi.reloadWhenSettingsChanged | 当用户设置更改时重新加载数据. (在某些频繁刷新设置的情况下需要关闭) | boolean                                     | `true`                                        |
 
 ## SwaggerJsonUrlItem
 
-| 属性            | 说明                               | 类型   | 是否必填 |
-| --------------- | ---------------------------------- | ------ | -------- |
-| title           | 项目标题                           | string | \*       |
-| url             | swagger json url                   | string | \*       |
-| link            | 在浏览器打开外部链接               | string |          |
-| basePath        | basePath                           | string |          |
-| headers         | 自定义请求头信息 (如鉴权 Token 等) | object |          |
-| savePath        | `.d.ts` 文件保存路径               | string |          |
-| requestSavePath | requestSavePath                    | string |          |
+| 属性            | 说明                               | 类型   | 是否必填           |
+| --------------- | ---------------------------------- | ------ | ------------------ |
+| title           | 项目标题                           | string | :heavy_check_mark: |
+| url             | swagger json url                   | string | :heavy_check_mark: |
+| link            | 在浏览器打开外部链接               | string |                    |
+| basePath        | 服务地址                           | string | :heavy_check_mark: |
+| headers         | 自定义请求头信息 (如鉴权 Token 等) | object |                    |
+| savePath        | `.d.ts` 文件保存路径               | string |                    |
+| requestSavePath | 请求文件保存路径                   | string |                    |
 
-## 快捷键
+## 保存请求函数
 
-- 搜索接口列表: <kbd>alt</kbd> + <kbd>shift</kbd> + <kbd>F</kbd>
+配置一个请求函数模板用于生成请求函数
 
----
+创建 `.vscode/swagger-to-types.template.cjs` 文件
+
+编写并导出 `saveRequest` 函数，即可使用此功能
+
+相关按钮将出现在这几个位置：
+
+- Swagger接口列表操作按钮
+- `.d.ts` 文件 标题栏操作按钮
+- `.d.ts` 文件 代码行首文字按钮
+
+下面是一个例子：
+
+```js
+/**
+ * 请求函数模板
+ *
+ * @param {{
+*  type: string
+*  basePath: string
+*  groupName: string
+*  method: string
+*  params: object
+*  paramsDesc: string
+*  response: TreeInterfacePropertiesItem | TreeInterfacePropertiesItem[] | string
+*  title: string
+*  path: string
+*  subTitle: string
+*  pathName: string
+*  fileName: string
+*  operationId: string
+*  savePath: string
+* }} treeInterface
+* @returns
+*/
+function saveRequest(treeInterface) {
+
+  return [
+    `/**
+  * @name ${treeInterface.title}
+  * @params ${treeInterface.paramsDesc} 
+  */`,
+    `export const ${treeInterface.pathName} = (params) => ${treeInterface.method}(\`${treeInterface.path}\`, ${treeInterface.params}, { serverName })`,
+  ]
+}
+
+/**
+ * 请求函数模板（TS）
+*/
+function saveRequestTS(treeInterface) {
+  return [
+    `/**
+    * @name ${treeInterface.title}
+    * @params ${treeInterface.paramsDesc} 
+    */`,
+    `export const ${treeInterface.pathName} = (params: ${treeInterface.pathName}.Params) => 
+      ${treeInterface.method}<${treeInterface.pathName}.ResponseData>(\`${treeInterface.path}\`, ${treeInterface.params}, { serverName })`,
+  ]
+}
+
+module.exports = { saveRequest, saveRequestTS }
+```
 
 以下为可选配置：
 
@@ -106,66 +170,8 @@ function paramsItem(item, params) {
 module.exports = { paramsItem }
 ```
 
-## 复制请求函数
-
-配置一个请求函数模板用于快速复制
-
-编辑 `.vscode/swagger-to-types.template.js` 文件
-
-如果导出了 `saveRequest` 函数，即可使用此功能
-
-相关按钮将出现在这几个位置：
-
-- 本地接口列表操作按钮
-- `.d.ts` 文件 标题栏操作按钮
-- `.d.ts` 文件 代码行首文字按钮
-
-下面是一个例子：
-
-```js
-/**
- * 请求函数模板
- *
- * @param {{
- *  fileName: string
- *  ext: string
- *  filePath: string
- *  name?: string
- *  namespace?: string
- *  path?: string
- *  method?: string
- *  update?: string
- *  ignore?: boolean
- *  savePath?: string
- * }} fileInfo
- * @returns
- */
-function saveRequest(fileInfo) {
-  return [
-    `/** ${fileInfo.name} */`,
-    `export async function unnamed(params?: ${fileInfo.namespace}.Params, options?: RequestOptions) {`,
-    `  return $api`,
-    `    .request<${fileInfo.namespace}.Response>('${fileInfo.path}', params, {`,
-    `      method: ${fileInfo.method},`,
-    `      ...options,`,
-    `    })`,
-    `    .then((res) => res.content || {})`,
-    `}`,
-  ]
-}
-
-module.exports = {
-  // ...
-  saveRequest,
-}
-```
-
-## 源代码相关
-
-开发预览调试：在 vscode 中按下 <kbd>F5</kbd> 即可。
-
 ## 注意
 
 - 支持 swagger v2 API
-- 支持 openapi 3.0.0 (1.1.4 新增)
+- 支持 openapi 3.0.0
 - 请不要对模板处理函数的参数直接进行赋值操作，这可能产生破坏性影响。
