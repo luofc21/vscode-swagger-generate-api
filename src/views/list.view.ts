@@ -404,7 +404,7 @@ export class ViewList extends BaseTreeProvider<ListItem> {
       const globalSaveRequestSavePath = config.extConfig.requestSavePath
       const savePath = path.resolve(WORKSPACE_PATH || '', globalSaveRequestSavePath)
       const serverName = item.basePath.slice(1)
-      const filePathH = path.join(savePath, `${serverName}.js`)
+      const filePathH = path.join(savePath, `${item.groupName}.js`)
       const fileHeaderDoc = 
 `${config.extConfig.requestHeaderDoc}
 
