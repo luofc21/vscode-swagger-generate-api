@@ -23,7 +23,7 @@ import {
   WORKSPACE_PATH,
   localize,
   showLoading,
-  templateConfig
+  templateConfig,
 } from '../tools'
 
 type SwaggerJsonMap = Map<string, SwaggerJsonTreeItem[]>
@@ -112,6 +112,8 @@ export class ViewList extends BaseTreeProvider<ListItem> {
             this.swaggerJsonMap.set(item.url, parseSwaggerJson(res as OpenAPIV2.Document, item))
           } else if (res.openapi) {
             this.swaggerJsonMap.set(item.url, new OpenAPIV3Parser(res as OpenAPIV3.Document, item).parse())
+          } else {
+            console.log('getSwaggerJson===>', res)
           }
           resolve(this.swaggerJsonMap)
         })
@@ -373,7 +375,7 @@ export class ViewList extends BaseTreeProvider<ListItem> {
       bodyParams = bodyParams ? `{ ${bodyParams.trim().slice(0, -1)} }` : null
     } else {
       if (Array.isArray(itemSource.params)) {
-        itemSource.params.forEach(param => {
+        itemSource.params.forEach((param) => {
           bodyParamsDesc += `${param.name}: ${param.type}, `
         })
       } else {
@@ -393,7 +395,7 @@ export class ViewList extends BaseTreeProvider<ListItem> {
     isSaveTypes?: boolean
   ): Promise<'no-change' | void> {
     const item = itemSource as TreeInterface
-    console.log('request.item===>', item );
+    console.log('request.item===>', item)
     const { compareChanges } = config.extConfig
     if (!item.pathName) return Promise.reject('SaveInterface Error')
     const request = isSaveTypes ? templateConfig.saveRequestTS : templateConfig.saveRequest
@@ -404,9 +406,9 @@ export class ViewList extends BaseTreeProvider<ListItem> {
       const globalSaveRequestSavePath = config.extConfig.requestSavePath
       const savePath = path.resolve(WORKSPACE_PATH || '', globalSaveRequestSavePath)
       const serverName = item.basePath.slice(1)
-      const filePathH = path.join(savePath, `${item.groupName}.js`)
-      const fileHeaderDoc = 
-`${config.extConfig.requestHeaderDoc}
+      const newGroupName = item.groupName.replace(/\//g, '-') // 确保创建的文件名不带/
+      const filePathH = path.join(savePath, `${newGroupName}.js`) //使用配置中的title作为文件名
+      const fileHeaderDoc = `${config.extConfig.requestHeaderDoc}
 
 const serverName = '${serverName}'
 `
