@@ -102,14 +102,13 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
       if (fs.existsSync(savePath)) {
         fs.readdirSync(savePath).forEach((file) => {
           const filePath = path.join(savePath, file)
+          // console.log('viewLocal filePath===>', filePath)
           const fileInfoList = this.readLocalRequestFile(filePath)
           // console.log('fileInfo===>', fileInfoList);
           if (fileInfoList) {
             localFiles.push(filePath)
             this.localFilesMap.set(filePath, fileInfoList)
           }
-            
-          
         })
       } else {
         log.warn('<initLocalFiles> localPath does not exist')
@@ -163,22 +162,21 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
   readLocalRequestFile(fileName: string, text?: string): FileHeaderInfo[] | undefined {
     try {
       // 读取文件内容
-      const fileStr = text || fs.readFileSync(fileName, 'utf-8') 
-      const headerStrList = fileStr.match(
-        /\/\*\*([\s\S]*?)\*\/\nexport\sconst\s[\S]*\s/gs
-      )
+      const fileStr = text || fs.readFileSync(fileName, 'utf-8')
+      const headerStrList = fileStr.match(/\/\*\*([\s\S]*?)\*\/\nexport\sconst\s[\S]*\s/gs)
       // const pathList = fileStr.match(/\`([\S]*?)\`\p{P}/gs)
       const headerInfoList: FileHeaderInfo[] = []
+      // console.log('viewLocal headerStrList===>', headerStrList)
       headerStrList?.forEach((headerStr: string) => {
         const headerInfo: FileHeaderInfo = {
           fileName: fileName.replace(/^.+\/(.+?)(\.d)?\.{.+}$/, ''),
           filePath: fileName,
           ext: fileName.replace(/^.+\.(.+)$/, '$1'),
-          isRequest: true
+          isRequest: true,
         }
         const infoList = headerStr.split('export const ')
         if (infoList.length > 1) {
-          headerInfo['namespace'] = infoList[1].trim()
+          headerInfo['namespace'] = infoList[1].trim().replace(/\$/g, '')
           headerInfo['update'] = new Date().toLocaleString()
           infoList[0].replace(/\*\s*@([^\s]+)[^\S\n]*([^\n]*?)\r?\n/g, (_, key, value) => {
             headerInfo[key] = value.trim() || true
@@ -187,7 +185,8 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
         }
         headerInfoList.push(headerInfo)
       })
-      return headerInfoList;
+      // console.log('viewLocal headerInfoList===>', headerInfoList)
+      return headerInfoList
     } catch (error) {
       log.error(`Read File Error - ${fileName}`)
     }
@@ -335,12 +334,12 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
     for (const [key, item] of this.localFilesMap) {
       if (Array.isArray(item)) {
         item.forEach((i) => {
-          if (!this.localFilesList.some((file) =>file.namespace === i.namespace)) {
+          if (!this.localFilesList.some((file) => file.namespace === i.namespace)) {
             this.localFilesList.push(i)
           }
         })
       } else {
-        if (!this.localFilesList.some((file) =>file.namespace === item.namespace)) {
+        if (!this.localFilesList.some((file) => file.namespace === item.namespace)) {
           this.localFilesList.push(item)
         }
       }
@@ -385,7 +384,10 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
         return reject()
       }
       try {
-        const regexp = new RegExp(`\\/\\*[^\\/]*\\*\\/\\n?export\\sconst\\s${methodNameToRemove}\\s*=\\s*\\([^]*?\\)\\s*=>([\\s\\S]*?)\\)`,'gs')
+        const regexp = new RegExp(
+          `\\/\\*[^\\/]*\\*\\/\\n?export\\sconst\\s${methodNameToRemove}\\s*=\\s*\\([^]*?\\)\\s*=>([\\s\\S]*?)\\)`,
+          'gs'
+        )
         const updatedData = code.replace(regexp, '')
         fs.writeFileSync(filePath, updatedData, 'utf-8')
         resolve(void 0)
@@ -394,7 +396,6 @@ export class ViewLocal extends BaseTreeProvider<LocalItem> {
         reject()
       }
     })
-    
   }
   // /** 使用babel解析代码，删除指定的export*/
   // removeExportByName(code: string, methodNameToRemove: string) {

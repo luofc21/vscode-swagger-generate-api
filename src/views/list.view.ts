@@ -395,12 +395,14 @@ export class ViewList extends BaseTreeProvider<ListItem> {
     isSaveTypes?: boolean
   ): Promise<'no-change' | void> {
     const item = itemSource as TreeInterface
-    console.log('request.item===>', item)
+    // console.log('request.item===>', item)
     const { compareChanges } = config.extConfig
     if (!item.pathName) return Promise.reject('SaveInterface Error')
     const request = isSaveTypes ? templateConfig.saveRequestTS : templateConfig.saveRequest
     if (request) {
-      const newItem = this.adjustRequestParams(item)
+      let newItem = this.adjustRequestParams(item)
+      newItem.pathName = newItem.pathName.replace(/\$/g, '') // 请求命名中不带有$
+      // console.log('newItem===>', newItem)
       const str = request(newItem)
       /** 生成请求文件&代码 */
       const globalSaveRequestSavePath = config.extConfig.requestSavePath

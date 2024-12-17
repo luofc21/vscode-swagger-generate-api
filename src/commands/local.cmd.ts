@@ -1,7 +1,15 @@
 import vscode from 'vscode'
 import path from 'path'
 
-import { log, localize, templateConfig, config, WORKSPACE_PATH, saveDocument, getWorkspaceTemplateConfig } from '../tools'
+import {
+  log,
+  localize,
+  templateConfig,
+  config,
+  WORKSPACE_PATH,
+  saveDocument,
+  getWorkspaceTemplateConfig,
+} from '../tools'
 
 import { ViewLocal, LocalItem } from '../views/local.view'
 import { ViewList } from '../views/list.view'
@@ -110,9 +118,12 @@ export function registerLocalCommands(viewList: ViewList, viewLocal: ViewLocal) 
 
     /** 复制请求代码 */
     copyRequest(e: any) {
-      // console.log('e===>', e);
+      console.log('e===>', e)
       const filePath = e.path || e.options.filePath
       const fileInfo: any = viewLocal.readLocalFile(filePath)
+      console.log('localFilesMap:', viewLocal.localFilesMap)
+      console.log('localFilesList:', viewLocal.localFilesList)
+
       // console.log('fileInfo===>', fileInfo);
 
       if (!fileInfo) {

@@ -316,5 +316,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/luofc21/vscode-swagger-generate-api.git"
+  },
+  "dependencies": {
+    "axios": "^1.7.2"
   }
 }
